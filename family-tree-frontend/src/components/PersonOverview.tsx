@@ -4,6 +4,8 @@ import { useData } from '../hooks/useData'
 import LazyPersonCard from './LazyPersonCard'
 import PersonCard from './PersonCard'
 import Loading from './shared/Loading'
+import AddPersonCard from './AddPersonCard'
+import PersonList from './PersonList'
 
 type Props = { id: string }
 
@@ -27,14 +29,20 @@ const PersonOverview = ({ id }: Props) => {
           xs={12}
           md={6}
         >
-          {person.data?.spouse?.id && (
+          {person.data?.spouse?.id ? (
             <LazyPersonCard
-              id={person.data?.spouse.id}
+              id={person.data?.spouse.personId === id ? person.data?.spouse.relatedId : person.data?.spouse.personId}
               hideDelete
               description="Spouse"
             />
+          ) : (
+            <AddPersonCard text="Add spouse" />
           )}
         </Grid>
+        <Grid
+          item
+          xs={12}
+        ></Grid>
       </Grid>
     </Loading>
   )

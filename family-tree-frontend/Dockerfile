@@ -43,16 +43,3 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FamilyTree.Api.dll"]
-
-
-
-
-
-
-    # environment:
-    #   - ASPNETCORE_ENVIRONMENT=Development
-    #   - ASPNETCORE_URLS=https://+:443;http://+:80
-    #   - ASPNETCORE_HTTPS_PORT=5001
-    # ports:
-    #   - "5010:80"
-    #   - "5011:443"
