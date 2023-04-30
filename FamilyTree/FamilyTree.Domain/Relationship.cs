@@ -7,13 +7,17 @@ public class Relationship
     public string PersonId { get; set; }
     public virtual Person Person { get; set; }
 
-    public RelationshipType Type { get; set; }
+    public RelationshipType Is { get; set; }
 
-    public string RelatedId { get; set; }
-    public virtual Person Related { get; set; }
+    public string OfId { get; set; }
+    public virtual Person Of { get; set; }
 
-    public DateTime? From { get; set; }
+    public bool IsMarried { get; set; }
 
-    public DateTime? To { get; set; }
+    public DateTime? MarriedOn { get; set; }
+
+    public DateTime? ValidFrom { get; set; }
+
+    public DateTime? ValidTo { get; set; }
     
 }

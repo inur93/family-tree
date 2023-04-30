@@ -8,12 +8,14 @@ public class CreateRelationshipDto
     public string PersonId { get; set; }
 
     [Required]
-    public RelationshipTypeDto Type { get; set; }
+    public RelationshipTypeDto Is { get; set; }
 
     [Required]
-    public string RelatedId { get; set; }
+    public string OfId { get; set; }
 
-    public DateTime? From { get; set; }
+    public DateTime? MarriedOn { get; set; }
 
-    public DateTime? To { get; set; }
+    public DateTime? ValidFrom { get; set; }
+
+    public DateTime? ValidTo { get; set; }
 }

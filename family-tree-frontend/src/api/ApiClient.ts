@@ -27,7 +27,7 @@ export class ApiClient {
      * @param query (optional) 
      * @return Success
      */
-    searchPeople(query: string | undefined , cancelToken?: CancelToken | undefined): Promise<PersonDto[]> {
+    searchPeople(query: string | undefined , cancelToken?: CancelToken | undefined): Promise<BasicPersonDto[]> {
         let url_ = this.baseUrl + "/api/person?";
         if (query === null)
             throw new Error("The parameter 'query' cannot be null.");
@@ -55,7 +55,7 @@ export class ApiClient {
         });
     }
 
-    protected processSearchPeople(response: AxiosResponse): Promise<PersonDto[]> {
+    protected processSearchPeople(response: AxiosResponse): Promise<BasicPersonDto[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -72,18 +72,18 @@ export class ApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(PersonDto.fromJS(item));
+                    result200!.push(BasicPersonDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
             }
-            return Promise.resolve<PersonDto[]>(result200);
+            return Promise.resolve<BasicPersonDto[]>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<PersonDto[]>(null as any);
+        return Promise.resolve<BasicPersonDto[]>(null as any);
     }
 
     /**
@@ -194,6 +194,67 @@ export class ApiClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<PersonDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getRelatedPeople(id: string , cancelToken?: CancelToken | undefined): Promise<BasicPersonDto[]> {
+        let url_ = this.baseUrl + "/{id}/related";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetRelatedPeople(_response);
+        });
+    }
+
+    protected processGetRelatedPeople(response: AxiosResponse): Promise<BasicPersonDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicPersonDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return Promise.resolve<BasicPersonDto[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicPersonDto[]>(null as any);
     }
 
     /**
@@ -471,6 +532,56 @@ export class ApiClient {
     }
 }
 
+/** Person DTO used in lists and other related objects, to reduce amount of data */
+export class BasicPersonDto implements IBasicPersonDto {
+    id!: string;
+    displayName!: string;
+    birthday!: Date;
+    sex!: SexDto;
+
+    constructor(data?: IBasicPersonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.displayName = _data["displayName"];
+            this.birthday = _data["birthday"] ? new Date(_data["birthday"].toString()) : <any>undefined;
+            this.sex = _data["sex"];
+        }
+    }
+
+    static fromJS(data: any): BasicPersonDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BasicPersonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["displayName"] = this.displayName;
+        data["birthday"] = this.birthday ? this.birthday.toISOString() : <any>undefined;
+        data["sex"] = this.sex;
+        return data;
+    }
+}
+
+/** Person DTO used in lists and other related objects, to reduce amount of data */
+export interface IBasicPersonDto {
+    id: string;
+    displayName: string;
+    birthday: Date;
+    sex: SexDto;
+}
+
 export class CreatePersonDto implements ICreatePersonDto {
     firstname!: string;
     middlename?: string | undefined;
@@ -525,10 +636,11 @@ export interface ICreatePersonDto {
 
 export class CreateRelationshipDto implements ICreateRelationshipDto {
     personId!: string;
-    type!: RelationshipTypeDto;
-    relatedId!: string;
-    from?: Date | undefined;
-    to?: Date | undefined;
+    is!: RelationshipTypeDto;
+    ofId!: string;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
 
     constructor(data?: ICreateRelationshipDto) {
         if (data) {
@@ -542,10 +654,11 @@ export class CreateRelationshipDto implements ICreateRelationshipDto {
     init(_data?: any) {
         if (_data) {
             this.personId = _data["personId"];
-            this.type = _data["type"];
-            this.relatedId = _data["relatedId"];
-            this.from = _data["from"] ? new Date(_data["from"].toString()) : <any>undefined;
-            this.to = _data["to"] ? new Date(_data["to"].toString()) : <any>undefined;
+            this.is = _data["is"];
+            this.ofId = _data["ofId"];
+            this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
+            this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
+            this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
         }
     }
 
@@ -559,20 +672,22 @@ export class CreateRelationshipDto implements ICreateRelationshipDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["personId"] = this.personId;
-        data["type"] = this.type;
-        data["relatedId"] = this.relatedId;
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["is"] = this.is;
+        data["ofId"] = this.ofId;
+        data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
+        data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
+        data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
         return data;
     }
 }
 
 export interface ICreateRelationshipDto {
     personId: string;
-    type: RelationshipTypeDto;
-    relatedId: string;
-    from?: Date | undefined;
-    to?: Date | undefined;
+    is: RelationshipTypeDto;
+    ofId: string;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
 }
 
 export class NameDto implements INameDto {
@@ -635,15 +750,75 @@ export interface INameDto {
     to?: Date | undefined;
 }
 
+/** Relationship used in the context of a specific person. where FamilyTree.Contracts.Relationship.PersonalRelationshipDto.Person is System.Type to the person in question e.g. "Bobby" is "Child" to "Sally" */
+export class PersonalRelationshipDto implements IPersonalRelationshipDto {
+    id!: string;
+    is!: RelationshipTypeDto;
+    person!: BasicPersonDto;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
+
+    constructor(data?: IPersonalRelationshipDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.person = new BasicPersonDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.is = _data["is"];
+            this.person = _data["person"] ? BasicPersonDto.fromJS(_data["person"]) : new BasicPersonDto();
+            this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
+            this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
+            this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PersonalRelationshipDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonalRelationshipDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["is"] = this.is;
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
+        data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
+        data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+/** Relationship used in the context of a specific person. where FamilyTree.Contracts.Relationship.PersonalRelationshipDto.Person is System.Type to the person in question e.g. "Bobby" is "Child" to "Sally" */
+export interface IPersonalRelationshipDto {
+    id: string;
+    is: RelationshipTypeDto;
+    person: BasicPersonDto;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
+}
+
 export class PersonDto implements IPersonDto {
     id!: string;
     currentName!: NameDto;
     birthday!: Date;
     sex!: SexDto;
-    relationships!: RelationshipDto[];
-    readonly siblings!: RelationshipDto[];
-    readonly children!: RelationshipDto[];
-    spouse!: RelationshipDto;
+    relationships!: PersonalRelationshipDto[];
+    readonly children!: PersonalRelationshipDto[];
+    partner!: PersonalRelationshipDto;
 
     constructor(data?: IPersonDto) {
         if (data) {
@@ -655,9 +830,8 @@ export class PersonDto implements IPersonDto {
         if (!data) {
             this.currentName = new NameDto();
             this.relationships = [];
-            this.siblings = [];
             this.children = [];
-            this.spouse = new RelationshipDto();
+            this.partner = new PersonalRelationshipDto();
         }
     }
 
@@ -670,19 +844,14 @@ export class PersonDto implements IPersonDto {
             if (Array.isArray(_data["relationships"])) {
                 this.relationships = [] as any;
                 for (let item of _data["relationships"])
-                    this.relationships!.push(RelationshipDto.fromJS(item));
-            }
-            if (Array.isArray(_data["siblings"])) {
-                (<any>this).siblings = [] as any;
-                for (let item of _data["siblings"])
-                    (<any>this).siblings!.push(RelationshipDto.fromJS(item));
+                    this.relationships!.push(PersonalRelationshipDto.fromJS(item));
             }
             if (Array.isArray(_data["children"])) {
                 (<any>this).children = [] as any;
                 for (let item of _data["children"])
-                    (<any>this).children!.push(RelationshipDto.fromJS(item));
+                    (<any>this).children!.push(PersonalRelationshipDto.fromJS(item));
             }
-            this.spouse = _data["spouse"] ? RelationshipDto.fromJS(_data["spouse"]) : new RelationshipDto();
+            this.partner = _data["partner"] ? PersonalRelationshipDto.fromJS(_data["partner"]) : new PersonalRelationshipDto();
         }
     }
 
@@ -704,17 +873,12 @@ export class PersonDto implements IPersonDto {
             for (let item of this.relationships)
                 data["relationships"].push(item.toJSON());
         }
-        if (Array.isArray(this.siblings)) {
-            data["siblings"] = [];
-            for (let item of this.siblings)
-                data["siblings"].push(item.toJSON());
-        }
         if (Array.isArray(this.children)) {
             data["children"] = [];
             for (let item of this.children)
                 data["children"].push(item.toJSON());
         }
-        data["spouse"] = this.spouse ? this.spouse.toJSON() : <any>undefined;
+        data["partner"] = this.partner ? this.partner.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -724,20 +888,20 @@ export interface IPersonDto {
     currentName: NameDto;
     birthday: Date;
     sex: SexDto;
-    relationships: RelationshipDto[];
-    siblings: RelationshipDto[];
-    children: RelationshipDto[];
-    spouse: RelationshipDto;
+    relationships: PersonalRelationshipDto[];
+    children: PersonalRelationshipDto[];
+    partner: PersonalRelationshipDto;
 }
 
-/** Relationship where FamilyTree.Contracts.Relationship.RelationshipDto.PersonId is FamilyTree.Contracts.Relationship.RelationshipDto.Type to FamilyTree.Contracts.Relationship.RelationshipDto.RelatedId e.g. "Bobby" is "Child" to "Sally" */
+/** Relationship where FamilyTree.Contracts.Relationship.RelationshipDto.PersonId is System.Type to !:RelatedId e.g. "Bobby" is "Child" to "Sally" */
 export class RelationshipDto implements IRelationshipDto {
     id!: string;
     personId!: string;
-    type!: RelationshipTypeDto;
-    relatedId!: string;
-    from?: Date | undefined;
-    to?: Date | undefined;
+    is!: RelationshipTypeDto;
+    toId!: string;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
 
     constructor(data?: IRelationshipDto) {
         if (data) {
@@ -752,10 +916,11 @@ export class RelationshipDto implements IRelationshipDto {
         if (_data) {
             this.id = _data["id"];
             this.personId = _data["personId"];
-            this.type = _data["type"];
-            this.relatedId = _data["relatedId"];
-            this.from = _data["from"] ? new Date(_data["from"].toString()) : <any>undefined;
-            this.to = _data["to"] ? new Date(_data["to"].toString()) : <any>undefined;
+            this.is = _data["is"];
+            this.toId = _data["toId"];
+            this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
+            this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
+            this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
         }
     }
 
@@ -770,27 +935,39 @@ export class RelationshipDto implements IRelationshipDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["personId"] = this.personId;
-        data["type"] = this.type;
-        data["relatedId"] = this.relatedId;
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["is"] = this.is;
+        data["toId"] = this.toId;
+        data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
+        data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
+        data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
         return data;
     }
 }
 
-/** Relationship where FamilyTree.Contracts.Relationship.RelationshipDto.PersonId is FamilyTree.Contracts.Relationship.RelationshipDto.Type to FamilyTree.Contracts.Relationship.RelationshipDto.RelatedId e.g. "Bobby" is "Child" to "Sally" */
+/** Relationship where FamilyTree.Contracts.Relationship.RelationshipDto.PersonId is System.Type to !:RelatedId e.g. "Bobby" is "Child" to "Sally" */
 export interface IRelationshipDto {
     id: string;
     personId: string;
-    type: RelationshipTypeDto;
-    relatedId: string;
-    from?: Date | undefined;
-    to?: Date | undefined;
+    is: RelationshipTypeDto;
+    toId: string;
+    marriedOn?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
 }
 
 export enum RelationshipTypeDto {
-    Spouse = "Spouse",
     Child = "Child",
+    Parent = "Parent",
+    Partner = "Partner",
+    Spouse = "Spouse",
+    Wife = "Wife",
+    Husband = "Husband",
+    Girlfriend = "Girlfriend",
+    Boyfriend = "Boyfriend",
+    Daughter = "Daughter",
+    Son = "Son",
+    Mother = "Mother",
+    Father = "Father",
 }
 
 export enum SexDto {
@@ -799,8 +976,9 @@ export enum SexDto {
 }
 
 export class UpdateRelationshipDto implements IUpdateRelationshipDto {
-    from?: Date | undefined;
-    to?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
+    marriedOn?: Date | undefined;
 
     constructor(data?: IUpdateRelationshipDto) {
         if (data) {
@@ -813,8 +991,9 @@ export class UpdateRelationshipDto implements IUpdateRelationshipDto {
 
     init(_data?: any) {
         if (_data) {
-            this.from = _data["from"] ? new Date(_data["from"].toString()) : <any>undefined;
-            this.to = _data["to"] ? new Date(_data["to"].toString()) : <any>undefined;
+            this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
+            this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
+            this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
         }
     }
 
@@ -827,15 +1006,17 @@ export class UpdateRelationshipDto implements IUpdateRelationshipDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
+        data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
+        data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
         return data;
     }
 }
 
 export interface IUpdateRelationshipDto {
-    from?: Date | undefined;
-    to?: Date | undefined;
+    validFrom?: Date | undefined;
+    validTo?: Date | undefined;
+    marriedOn?: Date | undefined;
 }
 
 export class ApiException extends Error {

@@ -1,11 +1,11 @@
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { IPersonDto, SexDto } from '../api/ApiClient'
-import { format } from 'date-fns'
-import { personColor } from '../functions/colorFunctions'
 import { Add } from '@mui/icons-material'
+import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import { format } from 'date-fns'
+import { IBasicPersonDto } from '../api/ApiClient'
+import { personColor } from '../functions/colorFunctions'
 
 type Props = {
-  people: IPersonDto[]
+  people: IBasicPersonDto[]
   onClick?: (id: string) => Promise<void>
   hideBackgroundColor?: boolean
   emptyText?: string
@@ -25,7 +25,7 @@ const PersonList = ({ people, emptyText, hideBackgroundColor, onClick, onAction,
           onClick={async () => onClick && onClick(x.id)}
         >
           <ListItemText
-            primary={x.currentName.displayName}
+            primary={x.displayName}
             secondary={format(x.birthday, 'dd-MM-yyyy')}
           />
         </ListItemButton>

@@ -1,24 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FamilyTree.Contracts.Person;
+using System.ComponentModel.DataAnnotations;
 
 namespace FamilyTree.Contracts.Relationship;
 
 /// <summary>
-/// Relationship where <see cref="PersonId"/> is <see cref="Type"/> to <see cref="RelatedId"/>
+/// Relationship used in the context of a specific person.
+/// where <see cref="Person"/> is <see cref="Type"/> to the person in question
 /// e.g. "Bobby" is "Child" to "Sally"
 /// </summary>
-public class RelationshipDto
+public class PersonalRelationshipDto
 {
     [Required]
     public string Id { get; set; }
 
     [Required]
-    public string PersonId { get; set; }
-
-    [Required]
     public RelationshipTypeDto Is { get; set; }
 
     [Required]
-    public string ToId { get; set; }
+    public BasicPersonDto Person { get; set; }
 
     public DateTime? MarriedOn { get; set; }
 

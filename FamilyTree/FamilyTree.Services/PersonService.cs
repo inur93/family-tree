@@ -2,6 +2,7 @@
 using FamilyTree.Domain;
 using FamilyTree.Domain.Repositories;
 using FamilyTree.Services.Abstractions;
+using FamilyTree.Services.Extensions;
 using Mapster;
 
 namespace FamilyTree.Services;
@@ -36,7 +37,8 @@ public class PersonService : IPersonService
         var created = await _personRepository.Create(record, token);
         await _nameRepository.Create(name, token);
         await _unitOfWork.SaveChangesAsync(token);
-        return (await _personRepository.FindById(created.Id, token)).Adapt<PersonDto>();
+
+        return (await _personRepository.FindById(created.Id, token)).Map();
     }
 
     public async Task DeletePerson(string id, CancellationToken token = default)
@@ -45,25 +47,26 @@ public class PersonService : IPersonService
         await _unitOfWork.SaveChangesAsync(token);
     }
 
-    public async Task<IEnumerable<PersonDto>> GetByQuery(string? query, DateTime? birthdayFrom, DateTime? birthdayTo, CancellationToken token = default)
+    public async Task<IEnumerable<BasicPersonDto>> GetByQuery(string? query, DateTime? birthdayFrom, DateTime? birthdayTo, CancellationToken token = default)
     {
         var records = await _personRepository.FindByQuery(query, birthdayFrom, birthdayTo, token);
-        return records.Adapt<IEnumerable<PersonDto>>();
+        return records.MapBasic();
     }
 
     public async Task<PersonDto> GetPerson(string id, CancellationToken token = default)
     {
         var record = await _personRepository.FindById(id, token);
-        return record.Adapt<PersonDto>();
+        record.RelationshipOf = (await _relationshipRepository.GetRelationships(id, token)).ToList();
+        return record.Map();
     }
 
-    public async Task<IEnumerable<PersonDto>> GetRelatedPeople(string id, CancellationToken token = default)
+    public async Task<IEnumerable<BasicPersonDto>> GetRelatedPeople(string id, CancellationToken token = default)
     {
         var records = await _relationshipRepository.GetRelationships(id, token);
-        var people = records.Select(x => x.Related)
+        var people = records.Select(x => x.Of)
             .Concat(records.Select(x => x.Person))
             .DistinctBy(x => x.Id);
-        return records.Adapt<IEnumerable<PersonDto>>();
+        return people.MapBasic();
     }
 
     public async Task<PersonDto> UpdatePerson(string id, CreatePersonDto person, CancellationToken token = default)

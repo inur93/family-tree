@@ -13,8 +13,8 @@ public class RelationshipConfiguration : IEntityTypeConfiguration<Relationship>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
-        builder.Property(x => x.From);
-        builder.Property(x => x.To);
+        builder.Property(x => x.ValidFrom);
+        builder.Property(x => x.ValidTo);
 
         builder
             .HasOne(x => x.Person)
@@ -23,11 +23,11 @@ public class RelationshipConfiguration : IEntityTypeConfiguration<Relationship>
             .IsRequired();
 
         builder
-            .HasOne(x => x.Related)
-            .WithMany(x => x.RelationshipRelated)
-            .HasForeignKey(x => x.RelatedId)
+            .HasOne(x => x.Of)
+            .WithMany(x => x.RelationshipOf)
+            .HasForeignKey(x => x.OfId)
             .IsRequired();
 
-        builder.Property(x => x.Type).IsRequired();
+        builder.Property(x => x.Is).IsRequired();
     }
 }

@@ -18,18 +18,19 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
   const [people] = useData(() => FamilyTreeApi.searchPeople(undefined))
   const initialValues: ICreateRelationshipDto = {
     personId: '',
-    relatedId: '',
-    type: RelationshipTypeDto.Spouse,
-    from: undefined,
-    to: undefined,
+    ofId: '',
+    is: RelationshipTypeDto.Wife,
+    validFrom: undefined,
+    validTo: undefined,
+    marriedOn: undefined,
     ...defaultValues
   }
   const handleSubmit = (values: ICreateRelationshipDto) => {
-    if (values.from) {
-      values.from = new Date(values.from)
+    if (values.validFrom) {
+      values.validFrom = new Date(values.validFrom)
     }
-    if (values.to) {
-      values.to = new Date(values.to)
+    if (values.validTo) {
+      values.validTo = new Date(values.validTo)
     }
     onSubmit(values)
   }
@@ -48,33 +49,48 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
             people={people.data || []}
           />
           <Select
-            label="Type"
-            name="type"
-            value={values.type}
-            options={[RelationshipTypeDto.Spouse, RelationshipTypeDto.Spouse].map((x) => ({ label: x, key: x }))}
+            label="Is"
+            name="is"
+            value={values.is}
+            options={[
+              RelationshipTypeDto.Parent,
+              RelationshipTypeDto.Spouse,
+              RelationshipTypeDto.Partner,
+              RelationshipTypeDto.Child
+            ].map((x) => ({ label: x, key: x }))}
             onChange={handleChange}
           />
 
           <PersonSelect
-            name="relatedId"
-            label="Related"
-            value={values.relatedId}
+            name="ofId"
+            label="Of"
+            value={values.ofId}
             setFieldValue={setFieldValue}
             people={people.data || []}
           />
 
           <DateTimeField
-            name="from"
-            label="Valid from"
-            value={values.from}
+            name="marriedOn"
+            label="Married"
+            value={values.marriedOn}
             onBlur={handleBlur}
             onChange={handleChange}
             dateOnly
           />
+
           <DateTimeField
-            name="to"
+            name="validFrom"
+            label="Valid from"
+            value={values.validFrom}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            dateOnly
+          />
+
+          <DateTimeField
+            name="validTo"
             label="Valid to"
-            value={values.to}
+            value={values.validTo}
             onBlur={handleBlur}
             onChange={handleChange}
             dateOnly

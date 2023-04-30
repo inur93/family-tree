@@ -3,6 +3,7 @@ using System;
 using FamilyTree.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FamilyTree.Persistence.Migrations
 {
     [DbContext(typeof(FamilyTreeDatabaseContext))]
-    partial class FamilyTreeDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230430182830_RelationshipsColumnRename")]
+    partial class RelationshipsColumnRename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,9 +226,6 @@ namespace FamilyTree.Persistence.Migrations
 
                     b.Property<bool>("IsMarried")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("MarriedOn")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("OfId")
                         .IsRequired()

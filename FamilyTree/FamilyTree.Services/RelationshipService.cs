@@ -2,6 +2,7 @@
 using FamilyTree.Domain;
 using FamilyTree.Domain.Repositories;
 using FamilyTree.Services.Abstractions;
+using FamilyTree.Services.Extensions;
 using Mapster;
 
 namespace FamilyTree.Services;
@@ -19,7 +20,7 @@ internal class RelationshipService : IRelationshipService
 
     public async Task<RelationshipDto> CreateRelationship(CreateRelationshipDto relationship, CancellationToken token = default)
     {
-        var record = relationship.Adapt<Relationship>();
+        var record = relationship.Map();
         var created = await _relationshipRepository.Create(record, token);
         await _unitOfWork.SaveChangesAsync(token);
         return (await _relationshipRepository.FindById(created.Id, token)).Adapt<RelationshipDto>();

@@ -19,22 +19,16 @@ public class PersonDto
     public SexDto Sex { get; set; }
 
     [Required]
-    public ICollection<RelationshipDto> Relationships { get; set; }
+    public ICollection<PersonalRelationshipDto> Relationships { get; set; }
 
     [Required]
-    public ICollection<RelationshipDto> Siblings => Relationships
-        .Where(x => x.RelatedId == Id && x.Type == RelationshipTypeDto.Child)
+    public ICollection<PersonalRelationshipDto> Children => Relationships
+        .Where(x => x.Is.HasFlag(RelationshipTypeDto.Parent))
         .ToList();
 
     [Required]
-    public ICollection<RelationshipDto> Children => Relationships
-        .Where(x => x.PersonId == Id && x.Type != RelationshipTypeDto.Child)
-        .ToList();
-
-    [Required]
-    public RelationshipDto? Spouse => Relationships
+    public PersonalRelationshipDto? Partner => Relationships
         .FirstOrDefault(x =>
-        x.Type == RelationshipTypeDto.Spouse &&
-        x.To == null &&
-        (x.PersonId == Id || x.RelatedId == Id));
+        x.Is.HasFlag(RelationshipTypeDto.Partner) &&
+        x.ValidTo == null);
 }

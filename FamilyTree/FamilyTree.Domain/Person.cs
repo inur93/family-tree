@@ -12,8 +12,8 @@ public class Person
 
     public Sex Sex { get; set; }
 
-    public ICollection<Relationship> Relationships => RelationshipPerson.Concat(RelationshipRelated).ToList();
+    public ICollection<Relationship> Relationships => RelationshipPerson.Concat(RelationshipOf).ToList();
 
     public virtual ICollection<Relationship> RelationshipPerson { get; set; } = new List<Relationship>();
-    public virtual ICollection<Relationship> RelationshipRelated { get; set; } = new List<Relationship>();
+    public virtual ICollection<Relationship> RelationshipOf { get; set; } = new List<Relationship>();
 }

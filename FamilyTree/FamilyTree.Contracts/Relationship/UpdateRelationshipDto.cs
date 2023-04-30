@@ -2,7 +2,9 @@
 
 public class UpdateRelationshipDto
 {
-    public DateTime? From { get; set; }
+    public DateTime? ValidFrom { get; set; }
 
-    public DateTime? To { get; set; }
+    public DateTime? ValidTo { get; set; }
+
+    public DateTime? MarriedOn { get; set; }
 }

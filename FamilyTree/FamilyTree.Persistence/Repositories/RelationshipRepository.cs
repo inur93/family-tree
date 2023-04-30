@@ -23,10 +23,10 @@ internal class RelationshipRepository : RepositoryBase<Relationship>, IRelations
 
     public async Task<IEnumerable<Relationship>> GetRelationships(string personId, CancellationToken token = default)
     {
-        var relationships = await _set.Where(x => x.PersonId == personId || x.RelatedId == personId)
+        var relationships = await _set.Where(x => x.PersonId == personId || x.OfId == personId)
             .Include(x => x.Person)
             .ThenInclude(x => x.Names)
-            .Include(x => x.Related)
+            .Include(x => x.Of)
             .ThenInclude(x => x.Names)
             .ToListAsync(token);
 

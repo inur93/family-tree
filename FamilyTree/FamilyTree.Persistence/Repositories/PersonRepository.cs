@@ -22,8 +22,6 @@ internal class PersonRepository : RepositoryBase<Person>, IPersonRepository
             throw new EntityNotFoundException(typeof(Person), id);
 
         var entry = _context.Entry(person);
-        await entry.Collection(x => x.RelationshipPerson).LoadAsync(token);
-        await entry.Collection(x => x.RelationshipRelated).LoadAsync(token);
         await entry.Collection(x => x.Names).LoadAsync(token);
         return person;
     }
@@ -31,8 +29,6 @@ internal class PersonRepository : RepositoryBase<Person>, IPersonRepository
     public async Task<IEnumerable<Person>> FindByQuery(string? query, DateTime? birthdayFrom, DateTime? birthdayTo, CancellationToken token = default)
     {
         var q = _set.AsQueryable()
-            .Include(x => x.RelationshipPerson)
-            .Include(x => x.RelationshipRelated)
             .Include(x => x.Names)
             .AsQueryable();
         if (!string.IsNullOrWhiteSpace(query))

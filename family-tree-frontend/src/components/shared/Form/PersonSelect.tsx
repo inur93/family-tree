@@ -1,11 +1,11 @@
 import { Autocomplete, TextField } from '@mui/material'
-import { IPersonDto } from '../../../api/ApiClient'
+import { IBasicPersonDto } from '../../../api/ApiClient'
 
 type Props = {
   label: string
   name: string
   value: string
-  people: IPersonDto[]
+  people: IBasicPersonDto[]
   setFieldValue?: (field: string, value: any) => void
 }
 
@@ -16,7 +16,7 @@ const PersonSelect = ({ value, label, name, people, setFieldValue }: Props) => {
       id={`person-select-${name}`}
       value={people.find((x) => x.id === value) || null}
       options={people}
-      getOptionLabel={(option) => `${option.currentName.displayName} (${option.birthday.getFullYear()})`}
+      getOptionLabel={(option) => `${option.displayName} (${option.birthday.getFullYear()})`}
       onChange={(e, value, reason) => {
         setFieldValue && setFieldValue(name, value?.id)
       }}

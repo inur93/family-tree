@@ -17,7 +17,7 @@ public class PersonController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<PersonDto>> SearchPeople(
+    public async Task<IEnumerable<BasicPersonDto>> SearchPeople(
         [FromQuery] string? query,
         CancellationToken token)
     {
@@ -33,7 +33,7 @@ public class PersonController : ControllerBase
     }
 
     [HttpGet("/{id}/related")]
-    public async Task<IEnumerable<PersonDto>> GetRelatedPeople(
+    public async Task<IEnumerable<BasicPersonDto>> GetRelatedPeople(
         [FromRoute] string id,
         CancellationToken token)
     {

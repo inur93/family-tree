@@ -22,9 +22,9 @@ public class PersonConfiguration : IEntityTypeConfiguration<Person>
             .HasForeignKey(x => x.PersonId)
             .IsRequired();
 
-        builder.HasMany(x => x.RelationshipRelated)
-            .WithOne(x => x.Related)
-            .HasForeignKey(x => x.RelatedId)
+        builder.HasMany(x => x.RelationshipOf)
+            .WithOne(x => x.Of)
+            .HasForeignKey(x => x.OfId)
             .IsRequired();
 
         //the relationship is instead configured on the relationship entity

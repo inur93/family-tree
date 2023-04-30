@@ -2,5 +2,5 @@
 
 public enum RelationshipType
 {
-    Spouse, Child
+    Partner, Child
 }
