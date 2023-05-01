@@ -13,12 +13,8 @@ type Props = {
 }
 
 const PersonCard = ({ person, description, actions }: Props) => {
-  const toast = useToast()
   const birthday = format(person.birthday, 'dd-MM-yyyy')
-  const handleDelete = async () => {
-    await FamilyTreeApi.deletePerson(person.id)
-    toast(`${person.currentName.displayName} has been deleted`)
-  }
+
   return (
     <Card
       style={{

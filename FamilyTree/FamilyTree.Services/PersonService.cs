@@ -56,7 +56,7 @@ public class PersonService : IPersonService
     public async Task<PersonDto> GetPerson(string id, CancellationToken token = default)
     {
         var record = await _personRepository.FindById(id, token);
-        record.RelationshipOf = (await _relationshipRepository.GetRelationships(id, token)).ToList();
+        await _relationshipRepository.GetRelationships(id, token);
         return record.Map();
     }
 
