@@ -2,8 +2,9 @@ import { Grid } from '@mui/material'
 import { FamilyTreeApi } from '../api'
 import { useData } from '../hooks/useData'
 import AddPersonCard from './AddPersonCard'
-import LazyPersonCard from './LazyPersonCard'
 import PersonCard from './PersonCard'
+import PersonRelationship from './PersonRelationship'
+import { PersonActions } from './shared/CardHeaderActions'
 import Loading from './shared/Loading'
 
 type Props = { id: string }
@@ -21,7 +22,12 @@ const PersonOverview = ({ id }: Props) => {
           xs={12}
           md={6}
         >
-          {person.data && <PersonCard person={person.data} />}
+          {person.data && (
+            <PersonCard
+              person={person.data}
+              actions={<PersonActions person={person.data} />}
+            />
+          )}
         </Grid>
         <Grid
           item
@@ -29,11 +35,7 @@ const PersonOverview = ({ id }: Props) => {
           md={6}
         >
           {person.data?.partner?.id ? (
-            <LazyPersonCard
-              id={person.data?.partner.person.id}
-              hideDelete
-              description={person.data?.partner.is}
-            />
+            <PersonRelationship relationship={person.data?.partner} />
           ) : (
             <AddPersonCard text="Add partner" />
           )}

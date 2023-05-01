@@ -32,6 +32,9 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
     if (values.validTo) {
       values.validTo = new Date(values.validTo)
     }
+    if(values.marriedOn){
+      values.marriedOn = new Date(values.marriedOn)
+    }
     onSubmit(values)
   }
   return (

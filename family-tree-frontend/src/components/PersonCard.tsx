@@ -1,14 +1,18 @@
-import { Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@mui/material'
-import { IPersonDto, SexDto } from '../api/ApiClient'
+import { Card, CardContent, CardHeader } from '@mui/material'
 import { format } from 'date-fns'
-import { personColor } from '../functions/colorFunctions'
-import { Delete } from '@mui/icons-material'
+import { ReactNode } from 'react'
 import { FamilyTreeApi } from '../api'
+import { IPersonDto } from '../api/ApiClient'
+import { personColor } from '../functions/colorFunctions'
 import { useToast } from '../hooks/useToast'
 
-type Props = { person: IPersonDto; hideDelete?: boolean; description?: string }
+type Props = {
+  person: IPersonDto
+  description?: string
+  actions?: ReactNode
+}
 
-const PersonCard = ({ person, description, hideDelete }: Props) => {
+const PersonCard = ({ person, description, actions }: Props) => {
   const toast = useToast()
   const birthday = format(person.birthday, 'dd-MM-yyyy')
   const handleDelete = async () => {
@@ -22,16 +26,7 @@ const PersonCard = ({ person, description, hideDelete }: Props) => {
       }}
     >
       <CardHeader
-        action={
-          !hideDelete && (
-            <IconButton
-              aria-label="delete"
-              onClick={handleDelete}
-            >
-              <Delete />
-            </IconButton>
-          )
-        }
+        action={actions}
         title={person.currentName.displayName}
         subheader={birthday}
       />
