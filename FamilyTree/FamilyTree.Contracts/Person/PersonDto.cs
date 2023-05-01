@@ -26,7 +26,6 @@ public class PersonDto
         .Where(x => x.Is.HasFlag(RelationshipTypeDto.Parent))
         .ToList();
 
-    [Required]
     public PersonalRelationshipDto? Partner => Relationships
         .FirstOrDefault(x =>
         x.Is.HasFlag(RelationshipTypeDto.Partner) &&

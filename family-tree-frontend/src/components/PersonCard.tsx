@@ -8,7 +8,7 @@ import { useToast } from '../hooks/useToast'
 
 type Props = {
   person: IPersonDto
-  description?: string
+  description?: ReactNode
   actions?: ReactNode
 }
 

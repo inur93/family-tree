@@ -1,16 +1,42 @@
 import { format } from 'date-fns'
 import { FamilyTreeApi } from '../api'
-import { IPersonalRelationshipDto } from '../api/ApiClient'
+import { IPersonalRelationshipDto, RelationshipTypeDto } from '../api/ApiClient'
 import { useData } from '../hooks/useData'
 import PersonCard from './PersonCard'
 import { RelationshipActions } from './shared/CardHeaderActions'
 import Loading from './shared/Loading'
+import { Typography } from '@mui/material'
+
+const CoupleTypes = [
+  RelationshipTypeDto.Boyfriend,
+  RelationshipTypeDto.Girlfriend,
+  RelationshipTypeDto.Wife,
+  RelationshipTypeDto.Husband
+]
 
 const getRelationshipDescription = (relationship: IPersonalRelationshipDto) => {
+  const lines = []
+
   if (relationship.marriedOn) {
-    return `${relationship.is} (since ${format(relationship.marriedOn, 'MMMM yyyy')})`
+    lines.push(`${relationship.is} (Married since ${format(relationship.marriedOn, 'MMMM yyyy')})`)
   }
-  return relationship.is
+
+  if (relationship.validFrom && CoupleTypes.includes(relationship.is)) {
+    lines.push(`Couple since ${format(relationship.validFrom, 'MMMM yyyy')}`)
+  }
+
+  if (!lines.length) {
+    lines.push(`${relationship.is}`)
+  }
+
+  return lines.map((x) => (
+    <Typography
+      variant="body1"
+      key={x}
+    >
+      {x}
+    </Typography>
+  ))
 }
 
 type Props = {

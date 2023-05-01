@@ -818,7 +818,7 @@ export class PersonDto implements IPersonDto {
     sex!: SexDto;
     relationships!: PersonalRelationshipDto[];
     readonly children!: PersonalRelationshipDto[];
-    partner!: PersonalRelationshipDto;
+    partner?: PersonalRelationshipDto;
 
     constructor(data?: IPersonDto) {
         if (data) {
@@ -831,7 +831,6 @@ export class PersonDto implements IPersonDto {
             this.currentName = new NameDto();
             this.relationships = [];
             this.children = [];
-            this.partner = new PersonalRelationshipDto();
         }
     }
 
@@ -851,7 +850,7 @@ export class PersonDto implements IPersonDto {
                 for (let item of _data["children"])
                     (<any>this).children!.push(PersonalRelationshipDto.fromJS(item));
             }
-            this.partner = _data["partner"] ? PersonalRelationshipDto.fromJS(_data["partner"]) : new PersonalRelationshipDto();
+            this.partner = _data["partner"] ? PersonalRelationshipDto.fromJS(_data["partner"]) : <any>undefined;
         }
     }
 
@@ -890,7 +889,7 @@ export interface IPersonDto {
     sex: SexDto;
     relationships: PersonalRelationshipDto[];
     children: PersonalRelationshipDto[];
-    partner: PersonalRelationshipDto;
+    partner?: PersonalRelationshipDto;
 }
 
 /** Relationship where FamilyTree.Contracts.Relationship.RelationshipDto.PersonId is System.Type to !:RelatedId e.g. "Bobby" is "Child" to "Sally" */
