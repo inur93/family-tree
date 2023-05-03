@@ -1,15 +1,12 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FamilyTreeApi } from '../api'
 import { CreatePersonDto, ICreatePersonDto } from '../api/ApiClient'
-import CreatePersonForm from '../components/CreatePersonForm'
-import { useToast } from '../hooks/useToast'
+import EditPersonForm from '../components/EditPersonForm'
 import Loading from '../components/shared/Loading'
 import { useData } from '../hooks/useData'
-import EditPersonForm from '../components/EditPersonForm'
+import { useToast } from '../hooks/useToast'
 
-type Props = {}
-
-const UpdatePersonPage = ({}: Props) => {
+const UpdatePersonPage = () => {
   const toast = useToast()
   const navigate = useNavigate()
   const [params] = useSearchParams()

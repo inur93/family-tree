@@ -4,9 +4,7 @@ import { CreateRelationshipDto, ICreateRelationshipDto, RelationshipTypeDto } fr
 import CreateRelationshipForm from '../components/CreateRelationshipForm'
 import { useToast } from '../hooks/useToast'
 
-type Props = {}
-
-const CreateRelationshipPage = ({}: Props) => {
+const CreateRelationshipPage = () => {
   const toast = useToast()
   const [params] = useSearchParams()
   const navigate = useNavigate()
