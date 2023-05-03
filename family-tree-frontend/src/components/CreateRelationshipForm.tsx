@@ -6,6 +6,7 @@ import Button from './shared/Form/Button'
 import DateTimeField from './shared/Form/DateTimeField'
 import PersonSelect from './shared/Form/PersonSelect'
 import Select from './shared/Form/Select'
+import { Collapse } from '@mui/material'
 
 type Props = {
   onSubmit: (relationship: ICreateRelationshipDto) => Promise<void>
@@ -32,7 +33,7 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
     if (values.validTo) {
       values.validTo = new Date(values.validTo)
     }
-    if(values.marriedOn){
+    if (values.marriedOn) {
       values.marriedOn = new Date(values.marriedOn)
     }
     onSubmit(values)
@@ -72,32 +73,34 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
             people={people.data || []}
           />
 
-          <DateTimeField
-            name="marriedOn"
-            label="Married"
-            value={values.marriedOn}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            dateOnly
-          />
-
-          <DateTimeField
-            name="validFrom"
-            label="Valid from"
-            value={values.validFrom}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            dateOnly
-          />
-
-          <DateTimeField
-            name="validTo"
-            label="Valid to"
-            value={values.validTo}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            dateOnly
-          />
+          <Collapse in={values.is === RelationshipTypeDto.Spouse}>
+            <DateTimeField
+              name="marriedOn"
+              label="Married"
+              value={values.marriedOn}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              dateOnly
+            />
+          </Collapse>
+          <Collapse in={[RelationshipTypeDto.Spouse, RelationshipTypeDto.Partner].includes(values.is)}>
+            <DateTimeField
+              name="validFrom"
+              label="From"
+              value={values.validFrom}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              dateOnly
+            />
+            <DateTimeField
+              name="validTo"
+              label="To"
+              value={values.validTo}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              dateOnly
+            />
+          </Collapse>
           <Button
             submit
             primary

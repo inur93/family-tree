@@ -12,6 +12,11 @@ public class Name
     public DateTime From { get; set; }
     public DateTime? To { get; set; }
 
+    public Name()
+    {
+
+    }
+
     public Name(string firstname, string lastname, DateTime from) : this(firstname, null, lastname, from)
     {
 
