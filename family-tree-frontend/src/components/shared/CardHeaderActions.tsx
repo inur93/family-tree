@@ -16,8 +16,8 @@ export const PersonActions = ({ person }: PersonActionProps) => {
 
   const handleEdit = async () => {
     navigate({
-      pathname: '/',
-      search: `person=${person.id}`
+      pathname: '/edit-person',
+      search: `id=${person.id}`
     })
   }
 

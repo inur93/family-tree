@@ -5,6 +5,7 @@ import { theme } from './config/Theme'
 import CreatePersonPage from './pages/CreatePersonPage'
 import CreateRelationshipPage from './pages/CreateRelationshipPage'
 import FamilyOverviewPage from './pages/FamilyOverviewPage'
+import UpdatePersonPage from './pages/UpdatePersonPage'
 
 function App() {
   return (
@@ -19,6 +20,10 @@ function App() {
             <Route
               path="/create-relationship"
               element={<CreateRelationshipPage />}
+            />
+            <Route
+              path="/edit-person"
+              element={<UpdatePersonPage />}
             />
             <Route
               path="/"
