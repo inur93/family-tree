@@ -70,6 +70,10 @@ else
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider.AddDatabaseMigrations();
+    if (app.Environment.IsDevelopment())
+    {
+        await scope.ServiceProvider.AddDatabaseTestData();
+    }
 }
 
 app.MapControllers();

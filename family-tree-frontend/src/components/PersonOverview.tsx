@@ -7,6 +7,7 @@ import PersonRelationship from './PersonRelationship'
 import { PersonActions } from './shared/CardHeaderActions'
 import Loading from './shared/Loading'
 import Button from './shared/Form/Button'
+import { RelationshipTypeDto } from '../api/ApiClient'
 
 type Props = { id: string }
 
@@ -28,7 +29,14 @@ const PersonOverview = ({ id }: Props) => {
             <PersonCard
               person={person.data}
               actions={<PersonActions person={person.data} />}
-              description={<Button primary to='/create-relationship'>Add relationship</Button>}
+              description={
+                <Button
+                  primary
+                  to={`/create-relationship?personId=${id}`}
+                >
+                  Add relationship
+                </Button>
+              }
             />
           )}
         </Grid>
@@ -40,7 +48,10 @@ const PersonOverview = ({ id }: Props) => {
           {person.data?.partner?.id ? (
             <PersonRelationship relationship={person.data?.partner} />
           ) : (
-            <AddPersonCard text="Add partner" />
+            <AddPersonCard
+              text="Add partner"
+              linkTo={`/create-relationship?personId=${id}&type=${RelationshipTypeDto.Partner}`}
+            />
           )}
         </Grid>
         <Grid

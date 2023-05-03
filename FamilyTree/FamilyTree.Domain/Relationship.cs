@@ -19,5 +19,22 @@ public class Relationship
     public DateTime? ValidFrom { get; set; }
 
     public DateTime? ValidTo { get; set; }
-    
+
+    public Relationship() { }
+
+    public Relationship(Person person, RelationshipType @is, Person of)
+        : this(person, @is, of, null) { }
+
+    public Relationship(Person person, RelationshipType @is, Person of, DateTime? marriedOn)
+    {
+        Id = Guid.NewGuid().ToString();
+        PersonId = person.Id;
+        Person = person;
+        Is = @is;
+        Of = of;
+        OfId = of.Id;
+        MarriedOn = marriedOn;
+        IsMarried = marriedOn != null;
+    }
+
 }

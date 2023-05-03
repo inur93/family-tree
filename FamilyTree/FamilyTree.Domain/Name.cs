@@ -11,4 +11,17 @@ public class Name
 
     public DateTime From { get; set; }
     public DateTime? To { get; set; }
+
+    public Name(string firstname, string lastname, DateTime from) : this(firstname, null, lastname, from)
+    {
+
+    }
+    public Name(string firstname, string? middlename, string lastname, DateTime from)
+    {
+        Id = Guid.NewGuid().ToString();
+        Firstname = firstname;
+        Middlename = middlename;
+        Lastname = lastname;
+        From = from;
+    }
 }

@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader } from '@mui/material'
 import { format } from 'date-fns'
 import { ReactNode } from 'react'
-import { FamilyTreeApi } from '../api'
 import { IPersonDto } from '../api/ApiClient'
 import { personColor } from '../functions/colorFunctions'
-import { useToast } from '../hooks/useToast'
 
 type Props = {
   person: IPersonDto

@@ -19,7 +19,7 @@ const CreateRelationshipForm = ({ onSubmit, ...defaultValues }: Props) => {
   const initialValues: ICreateRelationshipDto = {
     personId: '',
     ofId: '',
-    is: RelationshipTypeDto.Wife,
+    is: RelationshipTypeDto.Partner,
     validFrom: undefined,
     validTo: undefined,
     marriedOn: undefined,
