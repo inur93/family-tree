@@ -16,7 +16,7 @@ const CreateRelationshipPage = () => {
   return (
     <CreateRelationshipForm
       personId={params.get('personId') || ''}
-      type={params.get('type') as RelationshipTypeDto}
+      is={params.get('type') as RelationshipTypeDto}
       onSubmit={handleSubmit}
     ></CreateRelationshipForm>
   )

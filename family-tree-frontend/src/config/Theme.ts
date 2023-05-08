@@ -8,6 +8,12 @@ export const theme = createTheme({
     }
   },
   components: {
+    MuiButton: {
+      defaultProps: {
+        color: 'primary',
+        variant: 'contained'
+      }
+    },
     MuiTextField: {
       defaultProps: {
         fullWidth: true

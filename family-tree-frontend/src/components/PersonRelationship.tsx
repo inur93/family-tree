@@ -18,11 +18,11 @@ const getRelationshipDescription = (relationship: IPersonalRelationshipDto) => {
   const lines = []
 
   if (relationship.marriedOn) {
-    lines.push(`${relationship.is} (Married since ${format(relationship.marriedOn, 'MMMM yyyy')})`)
+    lines.push(`${relationship.is} (Married since ${format(relationship.marriedOn, 'd. MMMM yyyy')})`)
   }
 
   if (relationship.validFrom && CoupleTypes.includes(relationship.is)) {
-    lines.push(`Couple since ${format(relationship.validFrom, 'MMMM yyyy')}`)
+    lines.push(`Couple since ${format(relationship.validFrom, 'd. MMMM yyyy')}`)
   }
 
   if (!lines.length) {
@@ -50,6 +50,7 @@ const PersonRelationship = ({ relationship }: Props) => {
       {person.data && (
         <PersonCard
           person={person.data}
+          clickable
           actions={<RelationshipActions relationship={relationship} />}
           description={getRelationshipDescription(relationship)}
         />

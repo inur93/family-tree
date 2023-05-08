@@ -33,6 +33,14 @@ internal class RelationshipService : IRelationshipService
         await _unitOfWork.SaveChangesAsync(token);
     }
 
+    public async Task<RelationshipDto> GetRelationship(string id, CancellationToken token)
+    {
+        var record = await _relationshipRepository.FindById(id, token);
+        var dto = record.Adapt<RelationshipDto>();
+        dto.Is = record.GetRelationshipType(record.PersonId);
+        return dto;
+    }
+
     public async Task<RelationshipDto> UpdateRelationship(string id, UpdateRelationshipDto relationship, CancellationToken token = default)
     {
         //var existing = await _relationshipRepository.FindById(id, token);

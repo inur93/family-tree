@@ -2,15 +2,20 @@ import { Add } from '@mui/icons-material'
 import { Card, CardActionArea, CardContent, CardHeader } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-type Props = { text: string; linkTo: string }
+type Props = {
+  text: string
+  linkTo: string
+  icon?: React.ReactNode
+}
 
-const AddPersonCard = ({ text, linkTo }: Props) => {
+const ActionCard = ({ text, linkTo, icon }: Props) => {
   const navigate = useNavigate()
+  const ActionIcon = icon ?? <Add />
   return (
     <Card onClick={() => navigate(linkTo)}>
       <CardActionArea>
         <CardHeader
-          title={<Add></Add>}
+          title={ActionIcon}
           subheader={text}
         />
         <CardContent></CardContent>
@@ -19,4 +24,4 @@ const AddPersonCard = ({ text, linkTo }: Props) => {
   )
 }
 
-export default AddPersonCard
+export default ActionCard

@@ -7,11 +7,13 @@ type Props = {
   value: string
   people: IBasicPersonDto[]
   setFieldValue?: (field: string, value: any) => void
+  disabled?: boolean
 }
 
-const PersonSelect = ({ value, label, name, people, setFieldValue }: Props) => {
+const PersonSelect = ({ value, label, name, people, disabled, setFieldValue }: Props) => {
   return (
     <Autocomplete
+      disabled={disabled}
       disablePortal
       id={`person-select-${name}`}
       value={people.find((x) => x.id === value) || null}

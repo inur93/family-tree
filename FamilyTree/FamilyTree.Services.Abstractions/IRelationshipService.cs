@@ -9,4 +9,5 @@ public interface IRelationshipService
     Task<RelationshipDto> UpdateRelationship(string id, UpdateRelationshipDto relationship, CancellationToken token);
 
     Task DeleteRelationship(string id, CancellationToken token);
+    Task<RelationshipDto> GetRelationship(string id, CancellationToken token);
 }

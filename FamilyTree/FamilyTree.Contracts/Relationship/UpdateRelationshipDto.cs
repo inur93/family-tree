@@ -7,4 +7,6 @@ public class UpdateRelationshipDto
     public DateTime? ValidTo { get; set; }
 
     public DateTime? MarriedOn { get; set; }
+
+    public RelationshipTypeDto Is { get; set; }
 }

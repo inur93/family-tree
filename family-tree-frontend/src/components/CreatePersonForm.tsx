@@ -3,7 +3,7 @@ import { ICreatePersonDto, SexDto } from '../api/ApiClient'
 import DateTimeField from './shared/Form/DateTimeField'
 import TextField from './shared/Form/TextField'
 import Select from './shared/Form/Select'
-import Button from './shared/Form/Button'
+import { Button } from '@mui/material'
 
 type Props = {
   onSubmit: (person: ICreatePersonDto) => Promise<void>
@@ -75,12 +75,7 @@ const CreatePersonForm = ({ onSubmit }: Props) => {
             ]}
             onChange={handleChange}
           />
-          <Button
-            submit
-            primary
-          >
-            Create
-          </Button>
+          <Button type="submit">Create</Button>
         </Form>
       )}
     </Formik>

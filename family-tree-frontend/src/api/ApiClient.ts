@@ -423,6 +423,60 @@ export class ApiClient {
     }
 
     /**
+     * @return Success
+     */
+    getRelationship(id: string , cancelToken?: CancelToken | undefined): Promise<RelationshipDto> {
+        let url_ = this.baseUrl + "/api/relationships/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetRelationship(_response);
+        });
+    }
+
+    protected processGetRelationship(response: AxiosResponse): Promise<RelationshipDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = RelationshipDto.fromJS(resultData200);
+            return Promise.resolve<RelationshipDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<RelationshipDto>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -897,7 +951,7 @@ export class RelationshipDto implements IRelationshipDto {
     id!: string;
     personId!: string;
     is!: RelationshipTypeDto;
-    toId!: string;
+    ofId!: string;
     marriedOn?: Date | undefined;
     validFrom?: Date | undefined;
     validTo?: Date | undefined;
@@ -916,7 +970,7 @@ export class RelationshipDto implements IRelationshipDto {
             this.id = _data["id"];
             this.personId = _data["personId"];
             this.is = _data["is"];
-            this.toId = _data["toId"];
+            this.ofId = _data["ofId"];
             this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
             this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
             this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
@@ -935,7 +989,7 @@ export class RelationshipDto implements IRelationshipDto {
         data["id"] = this.id;
         data["personId"] = this.personId;
         data["is"] = this.is;
-        data["toId"] = this.toId;
+        data["ofId"] = this.ofId;
         data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
         data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
         data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
@@ -948,7 +1002,7 @@ export interface IRelationshipDto {
     id: string;
     personId: string;
     is: RelationshipTypeDto;
-    toId: string;
+    ofId: string;
     marriedOn?: Date | undefined;
     validFrom?: Date | undefined;
     validTo?: Date | undefined;
@@ -978,6 +1032,7 @@ export class UpdateRelationshipDto implements IUpdateRelationshipDto {
     validFrom?: Date | undefined;
     validTo?: Date | undefined;
     marriedOn?: Date | undefined;
+    is?: RelationshipTypeDto;
 
     constructor(data?: IUpdateRelationshipDto) {
         if (data) {
@@ -993,6 +1048,7 @@ export class UpdateRelationshipDto implements IUpdateRelationshipDto {
             this.validFrom = _data["validFrom"] ? new Date(_data["validFrom"].toString()) : <any>undefined;
             this.validTo = _data["validTo"] ? new Date(_data["validTo"].toString()) : <any>undefined;
             this.marriedOn = _data["marriedOn"] ? new Date(_data["marriedOn"].toString()) : <any>undefined;
+            this.is = _data["is"];
         }
     }
 
@@ -1008,6 +1064,7 @@ export class UpdateRelationshipDto implements IUpdateRelationshipDto {
         data["validFrom"] = this.validFrom ? this.validFrom.toISOString() : <any>undefined;
         data["validTo"] = this.validTo ? this.validTo.toISOString() : <any>undefined;
         data["marriedOn"] = this.marriedOn ? this.marriedOn.toISOString() : <any>undefined;
+        data["is"] = this.is;
         return data;
     }
 }
@@ -1016,6 +1073,7 @@ export interface IUpdateRelationshipDto {
     validFrom?: Date | undefined;
     validTo?: Date | undefined;
     marriedOn?: Date | undefined;
+    is?: RelationshipTypeDto;
 }
 
 export class ApiException extends Error {

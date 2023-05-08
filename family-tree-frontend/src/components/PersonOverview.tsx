@@ -1,13 +1,12 @@
 import { Grid } from '@mui/material'
 import { FamilyTreeApi } from '../api'
+import { RelationshipTypeDto } from '../api/ApiClient'
 import { useData } from '../hooks/useData'
-import AddPersonCard from './AddPersonCard'
+import ActionCard from './ActionCard'
 import PersonCard from './PersonCard'
 import PersonRelationship from './PersonRelationship'
 import { PersonActions } from './shared/CardHeaderActions'
 import Loading from './shared/Loading'
-import Button from './shared/Form/Button'
-import { RelationshipTypeDto } from '../api/ApiClient'
 
 type Props = { id: string }
 
@@ -17,7 +16,8 @@ const PersonOverview = ({ id }: Props) => {
     <Loading {...person}>
       <Grid
         container
-        justifyContent={'flex-end'}
+        justifyContent={'flex-start'}
+        alignItems={'stretch'}
         spacing={2}
       >
         <Grid
@@ -29,14 +29,6 @@ const PersonOverview = ({ id }: Props) => {
             <PersonCard
               person={person.data}
               actions={<PersonActions person={person.data} />}
-              description={
-                <Button
-                  primary
-                  to={`/create-relationship?personId=${id}`}
-                >
-                  Add relationship
-                </Button>
-              }
             />
           )}
         </Grid>
@@ -48,24 +40,37 @@ const PersonOverview = ({ id }: Props) => {
           {person.data?.partner?.id ? (
             <PersonRelationship relationship={person.data?.partner} />
           ) : (
-            <AddPersonCard
+            <ActionCard
               text="Add partner"
               linkTo={`/create-relationship?personId=${id}&type=${RelationshipTypeDto.Partner}`}
             />
           )}
         </Grid>
+        {person.data?.relationships
+          .filter((x) => x.id !== person.data?.partner?.id)
+          .map((x) => (
+            <Grid
+              key={x.id}
+              item
+              xs={12}
+              sm={6}
+              md={6}
+              lg={4}
+            >
+              <PersonRelationship relationship={x} />
+            </Grid>
+          ))}
         <Grid
           item
           xs={12}
+          sm={6}
+          md={6}
+          lg={4}
         >
-          {person.data?.relationships
-            .filter((x) => x.id !== person.data?.partner?.id)
-            .map((x) => (
-              <PersonRelationship
-                key={x.id}
-                relationship={x}
-              />
-            ))}
+          <ActionCard
+            text="Add relationship"
+            linkTo={`/create-relationship?personId=${id}&type=${RelationshipTypeDto.Parent}`}
+          />
         </Grid>
       </Grid>
     </Loading>

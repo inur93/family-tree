@@ -15,8 +15,8 @@ public static class RelationshipExtensions
             ValidFrom = relationship.ValidFrom,
             ValidTo = relationship.ValidTo,
             Person = (relationship.OfId == personId ? relationship.Person : relationship.Of).MapBasic(),
-            Is = GetRelationshipType(personId, relationship),
-            };
+            Is = relationship.GetRelationshipType(personId),
+        };
     }
 
     public static Relationship Map(this CreateRelationshipDto relationship)
@@ -34,7 +34,7 @@ public static class RelationshipExtensions
         };
     }
 
-    private static RelationshipTypeDto GetRelationshipType(string personId, Relationship relationship)
+    public static RelationshipTypeDto GetRelationshipType(this Relationship relationship, string personId)
     {
         var other = relationship.PersonId == personId ? relationship.Of : relationship.Person;
         switch (relationship.Is)

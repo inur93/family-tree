@@ -6,6 +6,7 @@ import CreatePersonPage from './pages/CreatePersonPage'
 import CreateRelationshipPage from './pages/CreateRelationshipPage'
 import FamilyOverviewPage from './pages/FamilyOverviewPage'
 import UpdatePersonPage from './pages/UpdatePersonPage'
+import EditRelationshipPage from './pages/EditRelationshipPage'
 
 function App() {
   return (
@@ -14,17 +15,23 @@ function App() {
         <Toast>
           <Routes>
             <Route
-              path="/create-person"
+              path="create-person"
               element={<CreatePersonPage />}
             />
             <Route
-              path="/create-relationship"
+              path="create-relationship"
               element={<CreateRelationshipPage />}
             />
             <Route
-              path="/edit-person"
+              path="edit-person"
               element={<UpdatePersonPage />}
             />
+            <Route path="relationship">
+              <Route
+                path=":id"
+                element={<EditRelationshipPage />}
+              />
+            </Route>
             <Route
               path="/"
               element={<FamilyOverviewPage />}

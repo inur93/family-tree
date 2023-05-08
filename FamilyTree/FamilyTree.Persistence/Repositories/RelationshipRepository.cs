@@ -17,7 +17,7 @@ internal class RelationshipRepository : RepositoryBase<Relationship>, IRelations
             ?? throw new EntityNotFoundException(typeof(Relationship), id);
         var entry = _context.Entry(relationship);
         await entry.Reference(x => x.Person).LoadAsync(token);
-        await entry.Reference(x => x.Person).LoadAsync(token);
+        await entry.Reference(x => x.Of).LoadAsync(token);
         return relationship;
     }
 

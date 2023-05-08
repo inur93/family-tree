@@ -18,7 +18,7 @@ public class RelationshipDto
     public RelationshipTypeDto Is { get; set; }
 
     [Required]
-    public string ToId { get; set; }
+    public string OfId { get; set; }
 
     public DateTime? MarriedOn { get; set; }
 

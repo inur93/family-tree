@@ -14,9 +14,10 @@ type Props<T> = BaseProps<T> & {
   name: string
   label: string
   options: Option<T>[]
+  disabled?: boolean
 }
 
-function Select<T extends string | number>({ options, name, label, onChange, value }: Props<T>) {
+function Select<T extends string | number>({ options, name, label, onChange, value, disabled }: Props<T>) {
   return (
     <FormControl>
       <InputLabel id={`${name}-label`}>{label}</InputLabel>
@@ -27,6 +28,7 @@ function Select<T extends string | number>({ options, name, label, onChange, val
         name={name}
         label={label}
         onChange={onChange}
+        disabled={disabled}
       >
         {options.map((x) => (
           <MenuItem

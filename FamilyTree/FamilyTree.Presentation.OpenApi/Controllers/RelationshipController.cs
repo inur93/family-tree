@@ -25,6 +25,14 @@ public class RelationshipController : ControllerBase
         return await _relationshipService.CreateRelationship(relationship, token);
     }
 
+    [HttpGet("{id}")]
+    public async Task<RelationshipDto> GetRelationship(
+        [FromRoute] string id,
+        CancellationToken token)
+    {
+        return await _relationshipService.GetRelationship(id, token);
+    }
+
     [HttpPut("{id}")]
     public async Task<RelationshipDto> UpdateRelationship(
         [FromRoute] string id,
