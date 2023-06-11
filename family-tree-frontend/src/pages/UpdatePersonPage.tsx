@@ -5,6 +5,7 @@ import EditPersonForm from '../components/EditPersonForm'
 import Loading from '../components/shared/Loading'
 import { useData } from '../hooks/useData'
 import { useToast } from '../hooks/useToast'
+import { Grid } from '@mui/material'
 
 const UpdatePersonPage = () => {
   const toast = useToast()
@@ -14,22 +15,33 @@ const UpdatePersonPage = () => {
 
   const handleSubmit = async (person: ICreatePersonDto) => {
     const updated = await FamilyTreeApi.updatePerson(params.get('id')!, new CreatePersonDto(person))
-    toast(`'${updated.currentName.firstname}' has been updated`)
+    toast.success(`'${updated.currentName.firstname}' has been updated`)
     navigate({ pathname: '/', search: `person=${updated.id}` })
   }
   return (
     <Loading {...person}>
-      {person.data && (
-        <EditPersonForm
-          onSubmit={handleSubmit}
-          person={
-            new CreatePersonDto({
-              ...person.data,
-              ...person.data.currentName
-            })
-          }
-        ></EditPersonForm>
-      )}
+      <Grid
+        container
+        justifyContent="center"
+      >
+        <Grid
+          item
+          xs={11}
+          md={4}
+        >
+          {person.data && (
+            <EditPersonForm
+              onSubmit={handleSubmit}
+              person={
+                new CreatePersonDto({
+                  ...person.data,
+                  ...person.data.currentName
+                })
+              }
+            ></EditPersonForm>
+          )}
+        </Grid>
+      </Grid>
     </Loading>
   )
 }

@@ -6,8 +6,10 @@ type Props = {
   children?: React.ReactNode
 }
 
+type MessageLevel = 'error' | 'success'
 interface SnackbarMessage {
   message: string
+  level: MessageLevel
   key: number
 }
 
@@ -34,9 +36,12 @@ const Toast = ({ children }: Props) => {
     }
   }, [snackPack, messageInfo, open])
 
-  const notify = (message: string) => {
-    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }])
+  const notify = (message: string, level: MessageLevel) => {
+    setSnackPack((prev) => [...prev, { message, level, key: new Date().getTime() }])
   }
+
+  const success = (message: string) => notify(message, 'success')
+  const error = (message: string) => notify(message, 'error')
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -50,7 +55,12 @@ const Toast = ({ children }: Props) => {
   }
 
   return (
-    <ToastContext.Provider value={notify}>
+    <ToastContext.Provider
+      value={{
+        error,
+        success
+      }}
+    >
       {children}
       <Snackbar
         key={messageInfo ? messageInfo.key : undefined}
@@ -60,7 +70,7 @@ const Toast = ({ children }: Props) => {
         onClose={handleClose}
       >
         <Alert
-          severity="success"
+          severity={messageInfo?.level}
           onClose={handleClose}
           sx={{ width: '100%' }}
         >

@@ -1,10 +1,12 @@
 ﻿using FamilyTree.Contracts.Person;
 using FamilyTree.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTree.Presentation.OpenApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/person")]
 [Produces("application/json")]
 [Consumes("application/json")]

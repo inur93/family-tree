@@ -11,7 +11,7 @@ const CreatePersonPage = ({}: Props) => {
   const navigate = useNavigate()
   const handleSubmit = async (person: ICreatePersonDto) => {
     const created = await FamilyTreeApi.createPerson(new CreatePersonDto(person))
-    toast(`'${created.currentName.firstname}' has been created`)
+    toast.success(`'${created.currentName.firstname}' has been created`)
     navigate({ pathname: '/', search: `person=${created.id}` })
   }
   return <CreatePersonForm onSubmit={handleSubmit}></CreatePersonForm>

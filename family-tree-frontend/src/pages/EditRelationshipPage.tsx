@@ -11,7 +11,7 @@ const EditRelationshipPage = () => {
   const [relationship] = useData(async (id) => id && FamilyTreeApi.getRelationship(id), params.id)
 
   const handleSubmit = async () => {
-    toast('this operation has not been implemented')
+    toast.success('this operation has not been implemented')
   }
   return (
     <Loading {...relationship}>

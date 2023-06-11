@@ -1,4 +1,5 @@
-import { Grid } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
+import { Button, Grid, useMediaQuery, useTheme } from '@mui/material'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FamilyTreeApi } from '../api'
 import PersonList from '../components/PersonList'
@@ -9,8 +10,18 @@ type Props = {}
 
 const FamilyOverviewPage = ({}: Props) => {
   const [people] = useData(() => FamilyTreeApi.searchPeople(undefined))
+  const [search] = useSearchParams()
+  const theme = useTheme()
+  const isLarge = useMediaQuery(theme.breakpoints.up('md'))
+
   const navigate = useNavigate()
   const [params] = useSearchParams()
+
+  const navigatePerson = async (id: string) => {
+    navigate({ search: `person=${id}` })
+  }
+
+  const hideList = !!search.get('person')
   return (
     <Grid
       container
@@ -20,11 +31,21 @@ const FamilyOverviewPage = ({}: Props) => {
         item
         md={3}
       >
-        <PersonList
-          people={people.data || []}
-          onClick={async (id) => navigate({ search: `person=${id}` })}
-          onAction={async () => navigate('/create-person')}
-        />
+        {hideList && !isLarge && (
+          <Button
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/')}
+          >
+            Back to list
+          </Button>
+        )}
+        {(!hideList || isLarge) && (
+          <PersonList
+            people={people.data || []}
+            onClick={navigatePerson}
+            onAction={async () => navigate('/create-person')}
+          />
+        )}
       </Grid>
       {params.get('person') && (
         <Grid

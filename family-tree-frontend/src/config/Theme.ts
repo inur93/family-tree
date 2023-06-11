@@ -14,6 +14,13 @@ export const theme = createTheme({
         variant: 'contained'
       }
     },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          marginBottom: '1rem'
+        }
+      }
+    },
     MuiTextField: {
       defaultProps: {
         fullWidth: true

@@ -3,12 +3,19 @@ using System.Text.Json.Serialization;
 using FamilyTree.Persistence;
 using FamilyTree.Presentation.OpenApi;
 using FamilyTree.Services;
-using Duende.IdentityServer.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Duende.IdentityServer;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configuration = builder.Configuration;
 // Add services to the container.
 
+builder.Services.Configure<GoogleOptions>(x =>
+{
+    builder.Configuration.GetSection("Authentication:Google").Bind(x);
+});
+
+builder.Services.AddRepositories(builder.Configuration.GetConnectionString("Database"));
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -36,14 +43,53 @@ builder.Services.AddSwaggerGen(config =>
     config.SupportNonNullableReferenceTypes();
 });
 
-builder.Services.AddRepositories(builder.Configuration.GetConnectionString("Database"));
+
+builder.Services.AddIdentity();
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+
+});
+
+builder.Services.Configure<CookieAuthenticationOptions>(IdentityServerConstants.DefaultCheckSessionCookieName, options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+});
+
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
+
+builder.Services.ConfigureExternalCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.Cookie.SameSite = SameSiteMode.None;
+});
+
+builder.Services.AddHttpClient();
 builder.Services.AddServices();
+
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 
+// add middleware
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseIdentityServer();
 app.UseAuthorization();
+
 Console.WriteLine($"Starting in environemnt: {app.Environment.EnvironmentName}");
 if (app.Environment.IsDevelopment())
 {
@@ -56,6 +102,7 @@ if (app.Environment.IsDevelopment())
         c.WithOrigins(new string[] { "https://localhost:3000" });
         c.AllowAnyMethod();
         c.AllowAnyHeader();
+        c.AllowCredentials();
     });
 }
 else
@@ -77,5 +124,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapControllers();
-
 app.Run();

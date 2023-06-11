@@ -9,5 +9,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IPersonService, PersonService>();
         services.AddScoped<IRelationshipService, RelationshipService>();
+        services.AddScoped<ILoginServiceFactory, LoginServiceFactory>();
     }
 }

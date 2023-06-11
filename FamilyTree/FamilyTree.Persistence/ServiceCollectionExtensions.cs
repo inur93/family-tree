@@ -1,6 +1,8 @@
 ﻿using FamilyTree.Domain;
 using FamilyTree.Domain.Repositories;
+using FamilyTree.Persistence.Identity;
 using FamilyTree.Persistence.Repositories;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +21,23 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<IRelationshipRepository, RelationshipRepository>();
         services.AddScoped<INameRepository, NameRepository>();
+    }
+
+    public static AuthenticationBuilder AddIdentity(this IServiceCollection services)
+    {
+        services.AddDefaultIdentity<ApplicationUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true;
+        }).AddEntityFrameworkStores<FamilyTreeDatabaseContext>();
+
+        services.AddIdentityServer(options =>
+        {
+            options.Authentication.CookieSameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode.Unspecified;
+            options.Authentication.CheckSessionCookieSameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode.Unspecified;
+        })
+            .AddApiAuthorization<ApplicationUser, FamilyTreeDatabaseContext>();
+
+        return services.AddAuthentication();
     }
 
     public static async Task AddDatabaseMigrations(this IServiceProvider serviceProvider)

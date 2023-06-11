@@ -17,7 +17,7 @@ const EditRelationshipForm = ({ onSubmit, relationship }: Props) => {
 
   const handleDelete = async () => {
     await FamilyTreeApi.deleteRelationship(relationship.id)
-    toast('The relationship has been removed')
+    toast.success('The relationship has been removed')
     navigate(-1)
   }
 

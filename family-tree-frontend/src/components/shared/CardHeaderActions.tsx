@@ -21,7 +21,7 @@ export const PersonActions = ({ person }: PersonActionProps) => {
 
   const handleDelete = async () => {
     await FamilyTreeApi.deletePerson(person.id)
-    toast(`${person.currentName.displayName} has been deleted`)
+    toast.success(`${person.currentName.displayName} has been deleted`)
   }
   return (
     <>

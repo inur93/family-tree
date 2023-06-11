@@ -23,7 +23,7 @@ const PersonOverview = ({ id }: Props) => {
         <Grid
           item
           xs={12}
-          md={6}
+          sm={6}
         >
           {person.data && (
             <PersonCard
@@ -35,7 +35,7 @@ const PersonOverview = ({ id }: Props) => {
         <Grid
           item
           xs={12}
-          md={6}
+          sm={6}
         >
           {person.data?.partner?.id ? (
             <PersonRelationship relationship={person.data?.partner} />

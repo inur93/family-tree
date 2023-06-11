@@ -32,8 +32,13 @@ export const useData = <T, A>(loader: loaderType<T, A>, initialArg?: A): UseData
   }, [initialArg])
 
   const reload = async (args?: A) => {
-    if (args && typeof args !== 'object') load(args)
-    initialArg && load(initialArg)
+    if (args && typeof args !== 'object') {
+      load(args)
+    } else if (initialArg) {
+      load(initialArg)
+    } else {
+      load()
+    }
   }
 
   return [{ error, loading, data }, reload]

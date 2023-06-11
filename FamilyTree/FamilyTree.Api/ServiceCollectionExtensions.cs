@@ -1,4 +1,5 @@
 ﻿
+using FamilyTree.Api;
 using FamilyTree.Domain.Exceptions;
 using System.Net;
 
@@ -11,6 +12,7 @@ internal static class ServiceCollectionExtensions
         var options = new ExceptionMapperOptions();
 
         options.Map<EntityNotFoundException>(HttpStatusCode.BadRequest, x => "Entity Not Found", x => x.Message);
+        options.Map<AuthenticationException>(HttpStatusCode.Unauthorized, x => "Unauthorized", x => x.Message);
         services.AddSingleton(options);
     }
 }

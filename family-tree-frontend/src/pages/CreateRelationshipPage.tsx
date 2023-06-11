@@ -10,7 +10,7 @@ const CreateRelationshipPage = () => {
   const navigate = useNavigate()
   const handleSubmit = async (relationship: ICreateRelationshipDto) => {
     const created = await FamilyTreeApi.createRelationship(new CreateRelationshipDto(relationship))
-    toast(`Relationship has been created`)
+    toast.success(`Relationship has been created`)
     navigate({ pathname: '/', search: `person=${created.personId}` })
   }
   return (

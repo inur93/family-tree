@@ -24,6 +24,159 @@ export class ApiClient {
     }
 
     /**
+     * @return Success
+     */
+    me(  cancelToken?: CancelToken | undefined): Promise<UserProfile> {
+        let url_ = this.baseUrl + "/api/identity/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processMe(_response);
+        });
+    }
+
+    protected processMe(response: AxiosResponse): Promise<UserProfile> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = UserProfile.fromJS(resultData200);
+            return Promise.resolve<UserProfile>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<UserProfile>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    externalLogin(provider: string, body: ExternalLoginRequest | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/identity/{provider}/signin";
+        if (provider === undefined || provider === null)
+            throw new Error("The parameter 'provider' must be defined.");
+        url_ = url_.replace("{provider}", encodeURIComponent("" + provider));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processExternalLogin(_response);
+        });
+    }
+
+    protected processExternalLogin(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    signout(  cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/identity/signout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSignout(_response);
+        });
+    }
+
+    protected processSignout(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * @param query (optional) 
      * @return Success
      */
@@ -744,6 +897,42 @@ export interface ICreateRelationshipDto {
     validTo?: Date | undefined;
 }
 
+export class ExternalLoginRequest implements IExternalLoginRequest {
+    token?: string;
+
+    constructor(data?: IExternalLoginRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.token = _data["token"];
+        }
+    }
+
+    static fromJS(data: any): ExternalLoginRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExternalLoginRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data;
+    }
+}
+
+export interface IExternalLoginRequest {
+    token?: string;
+}
+
 export class NameDto implements INameDto {
     id!: string;
     readonly displayName!: string;
@@ -1074,6 +1263,62 @@ export interface IUpdateRelationshipDto {
     validTo?: Date | undefined;
     marriedOn?: Date | undefined;
     is?: RelationshipTypeDto;
+}
+
+export class UserProfile implements IUserProfile {
+    isLoggedIn?: boolean;
+    id?: string;
+    firstName?: string;
+    fullName?: string;
+    email?: string;
+    imageUrl?: string;
+
+    constructor(data?: IUserProfile) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isLoggedIn = _data["isLoggedIn"];
+            this.id = _data["id"];
+            this.firstName = _data["firstName"];
+            this.fullName = _data["fullName"];
+            this.email = _data["email"];
+            this.imageUrl = _data["imageUrl"];
+        }
+    }
+
+    static fromJS(data: any): UserProfile {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserProfile();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isLoggedIn"] = this.isLoggedIn;
+        data["id"] = this.id;
+        data["firstName"] = this.firstName;
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["imageUrl"] = this.imageUrl;
+        return data;
+    }
+}
+
+export interface IUserProfile {
+    isLoggedIn?: boolean;
+    id?: string;
+    firstName?: string;
+    fullName?: string;
+    email?: string;
+    imageUrl?: string;
 }
 
 export class ApiException extends Error {
