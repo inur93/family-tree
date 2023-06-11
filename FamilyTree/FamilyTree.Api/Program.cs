@@ -48,20 +48,20 @@ builder.Services.AddIdentity();
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.MinimumSameSitePolicy = builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
 
 });
 
 builder.Services.Configure<CookieAuthenticationOptions>(IdentityServerConstants.DefaultCheckSessionCookieName, options =>
 {
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
 });
 
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
     options.Events.OnRedirectToLogin = context =>
     {
@@ -73,7 +73,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.ConfigureExternalCookie(options =>
 {
     options.ExpireTimeSpan = TimeSpan.FromDays(1);
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite =  builder.Environment.IsDevelopment() ? SameSiteMode.None : SameSiteMode.Strict;
 });
 
 builder.Services.AddHttpClient();
