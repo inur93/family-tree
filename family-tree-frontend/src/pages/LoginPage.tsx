@@ -23,15 +23,42 @@ const LoginPage = ({ callback }: Props) => {
     <Grid
       container
       justifyContent="center"
+      style={{ paddingTop: '4rem' }}
       spacing={4}
     >
+      <div
+        style={{
+          height: '100vh',
+          width: '100vw',
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          opacity: 0.2,
+          zIndex: -1,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPositionY: 'center',
+          backgroundImage: `url('/images/family-tree-backdrop.png')`
+        }}
+      />
+      <Grid
+        item
+        xs={12}
+      >
+        <Typography
+          component="h1"
+          textAlign="center"
+          variant="h3"
+        >
+          Family Tree
+        </Typography>
+      </Grid>
       <Grid
         item
         xs={10}
         sm={6}
         md={4}
         lg={3}
-        xl={2}
       >
         <Paper sx={{ padding: '2rem' }}>
           <Grid
@@ -43,8 +70,16 @@ const LoginPage = ({ callback }: Props) => {
               item
               xs={12}
             >
-              <Typography variant="h4">Login</Typography>
-              <Typography variant="body1">Use either your google or facebook account to login</Typography>
+              <Typography
+                component="h1"
+                variant="h5"
+              >
+                Login
+              </Typography>
+              <Typography variant="body1">Use either your google or facebook account to signin.</Typography>
+              <Typography variant="body1">
+                If this is your first time signing in, you will automatically be registered. No need for signup.
+              </Typography>
             </Grid>
             <Grid
               item
