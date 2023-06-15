@@ -87,12 +87,6 @@ const LoginPage = ({ callback }: Props) => {
             >
               <GoogleLogin onResponse={handleCallback('google')} />
             </Grid>
-            <Grid
-              item
-              xs={12}
-            >
-              <FacebookLogin onResponse={handleCallback('facebook')} />
-            </Grid>
           </Grid>
         </Paper>
       </Grid>
